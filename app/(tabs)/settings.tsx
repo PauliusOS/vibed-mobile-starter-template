@@ -8,20 +8,23 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
-  Modal,
   Platform,
+  Image,
 } from 'react-native';
 import { LogOut, User, Mail, Shield } from 'lucide-react-native';
 import { useAuth, useUser } from '@clerk/clerk-expo';
-import { useRouter } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 
 export default function SettingsScreen() {
   const { signOut } = useAuth();
   const { user, isLoaded } = useUser();
-  const router = useRouter();
   const [isSigningOut, setIsSigningOut] = React.useState(false);
-  const [showConfirmDialog, setShowConfirmDialog] = React.useState(false);
+  const [imageLoadError, setImageLoadError] = React.useState(false);
+
+  React.useEffect(() => {
+    // Reset image error state when user image URL changes
+    setImageLoadError(false);
+  }, [user?.imageUrl]);
 
   const handleSignOut = async () => {
     console.log("Sign out button pressed");
@@ -104,11 +107,22 @@ export default function SettingsScreen() {
         <View style={styles.profileSection}>
           <View style={styles.profileCard}>
             <View style={styles.avatarContainer}>
-              <User size={32} color="#6B7280" strokeWidth={1.5} />
+              {user?.imageUrl && !imageLoadError ? (
+                <Image 
+                  source={{ uri: user.imageUrl }} 
+                  style={styles.avatar}
+                  onError={() => {
+                    console.log('Profile image failed to load');
+                    setImageLoadError(true);
+                  }}
+                />
+              ) : (
+                <User size={32} color="#6B7280" strokeWidth={1.5} />
+              )}
             </View>
             <View style={styles.profileInfo}>
               <Text style={styles.profileName}>
-                {user?.firstName || user?.username || 'User'}
+                {user?.fullName || `${user?.firstName || ''} ${user?.lastName || ''}`.trim() || user?.username || 'User'}
               </Text>
               <View style={styles.profileDetail}>
                 <Mail size={14} color="#9CA3AF" strokeWidth={2} />
@@ -267,5 +281,10 @@ const styles = StyleSheet.create({
   },
   disabledItem: {
     opacity: 0.6,
+  },
+  avatar: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
   },
 });

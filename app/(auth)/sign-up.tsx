@@ -11,11 +11,15 @@ import {
   ActivityIndicator,
   Modal,
 } from "react-native";
-import { useSignUp } from "@clerk/clerk-expo";
+import { useSignUp, useOAuth } from "@clerk/clerk-expo";
 import { useRouter, Link } from "expo-router";
+import * as WebBrowser from "expo-web-browser";
+
+WebBrowser.maybeCompleteAuthSession();
 
 export default function SignUpScreen() {
   const { isLoaded, signUp, setActive } = useSignUp();
+  const { startOAuthFlow } = useOAuth({ strategy: "oauth_google" });
   const router = useRouter();
 
   const [emailAddress, setEmailAddress] = useState("");
@@ -68,6 +72,30 @@ export default function SignUpScreen() {
     }
   };
 
+  const onGoogleSignUpPress = async () => {
+    try {
+      const { createdSessionId, signIn: oAuthSignIn, signUp: oAuthSignUp } = await startOAuthFlow();
+      
+      if (createdSessionId) {
+        await setActive({ session: createdSessionId });
+        router.replace("/(tabs)");
+      } else {
+        // Handle cases where additional steps are needed
+        console.log("OAuth flow incomplete:", { signIn: oAuthSignIn, signUp: oAuthSignUp });
+        if (oAuthSignIn && oAuthSignIn.status === "complete") {
+          await setActive({ session: oAuthSignIn.createdSessionId });
+          router.replace("/(tabs)");
+        } else if (oAuthSignUp && oAuthSignUp.status === "complete") {
+          await setActive({ session: oAuthSignUp.createdSessionId });
+          router.replace("/(tabs)");
+        }
+      }
+    } catch (err: any) {
+      console.error("Google OAuth error:", JSON.stringify(err, null, 2));
+      Alert.alert("Error", "Google sign up failed. Please try again.");
+    }
+  };
+
   return (
     <>
       <KeyboardAvoidingView
@@ -107,6 +135,19 @@ export default function SignUpScreen() {
             ) : (
               <Text style={styles.buttonText}>Sign Up</Text>
             )}
+          </TouchableOpacity>
+
+          <View style={styles.divider}>
+            <View style={styles.dividerLine} />
+            <Text style={styles.dividerText}>OR</Text>
+            <View style={styles.dividerLine} />
+          </View>
+
+          <TouchableOpacity
+            style={styles.googleButton}
+            onPress={onGoogleSignUpPress}
+          >
+            <Text style={styles.googleButtonText}>Continue with Google</Text>
           </TouchableOpacity>
 
           <View style={styles.footer}>
@@ -261,5 +302,34 @@ const styles = StyleSheet.create({
   cancelButtonText: {
     color: "#666",
     fontSize: 16,
+  },
+  divider: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 24,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: "#e0e0e0",
+  },
+  dividerText: {
+    marginHorizontal: 16,
+    color: "#666",
+    fontSize: 14,
+  },
+  googleButton: {
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    paddingVertical: 14,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+    marginBottom: 16,
+  },
+  googleButtonText: {
+    color: "#333",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });
