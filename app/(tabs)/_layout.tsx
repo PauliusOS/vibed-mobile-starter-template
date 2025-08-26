@@ -1,8 +1,19 @@
-import { Tabs } from 'expo-router';
+import { Tabs, Redirect } from 'expo-router';
 import { SquareCheck as CheckSquare, Settings } from 'lucide-react-native';
 import { Platform } from 'react-native';
+import { useAuth } from '@clerk/clerk-expo';
 
 export default function TabLayout() {
+  const { isSignedIn, isLoaded } = useAuth();
+
+  if (!isLoaded) {
+    return null;
+  }
+
+  if (!isSignedIn) {
+    return <Redirect href="/(auth)/sign-in" />;
+  }
+
   return (
     <Tabs
       screenOptions={{

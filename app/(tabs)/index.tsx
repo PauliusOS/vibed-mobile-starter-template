@@ -11,41 +11,53 @@ import { AddTodoForm } from '@/components/AddTodoForm';
 import { TodoItem } from '@/components/TodoItem';
 import { FilterTabs } from '@/components/FilterTabs';
 import { EmptyState } from '@/components/EmptyState';
+import { useQuery, useMutation } from 'convex/react';
+import { api } from '../../convex/_generated/api';
+import { Id } from '../../convex/_generated/dataModel';
 
 export interface Todo {
-  id: string;
+  _id: Id<"todos">;
   text: string;
   completed: boolean;
-  createdAt: Date;
+  createdAt: number;
+  userId: string;
 }
 
 type FilterType = 'all' | 'active' | 'completed';
 
 export default function TodosScreen() {
-  const [todos, setTodos] = useState<Todo[]>([]);
   const [filter, setFilter] = useState<FilterType>('all');
+  
+  const todos = useQuery(api.todos.list) || [];
+  const addTodoMutation = useMutation(api.todos.add);
+  const toggleTodoMutation = useMutation(api.todos.toggle);
+  const deleteTodoMutation = useMutation(api.todos.remove);
 
-  const addTodo = (text: string) => {
-    const newTodo: Todo = {
-      id: Date.now().toString(),
-      text: text.trim(),
-      completed: false,
-      createdAt: new Date(),
-    };
-    setTodos([newTodo, ...todos]);
+  const addTodo = async (text: string) => {
+    try {
+      await addTodoMutation({ text: text.trim() });
+    } catch (error) {
+      console.error("Failed to add todo:", error);
+    }
   };
 
-  const toggleTodo = (id: string) => {
-    setTodos(todos.map(todo => 
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo
-    ));
+  const toggleTodo = async (id: Id<"todos">) => {
+    try {
+      await toggleTodoMutation({ id });
+    } catch (error) {
+      console.error("Failed to toggle todo:", error);
+    }
   };
 
-  const deleteTodo = (id: string) => {
-    setTodos(todos.filter(todo => todo.id !== id));
+  const deleteTodo = async (id: Id<"todos">) => {
+    try {
+      await deleteTodoMutation({ id });
+    } catch (error) {
+      console.error("Failed to delete todo:", error);
+    }
   };
 
-  const filteredTodos = todos.filter(todo => {
+  const filteredTodos = todos.filter((todo: Todo) => {
     switch (filter) {
       case 'active':
         return !todo.completed;
@@ -56,8 +68,8 @@ export default function TodosScreen() {
     }
   });
 
-  const activeTodosCount = todos.filter(todo => !todo.completed).length;
-  const completedTodosCount = todos.filter(todo => todo.completed).length;
+  const activeTodosCount = todos.filter((todo: Todo) => !todo.completed).length;
+  const completedTodosCount = todos.filter((todo: Todo) => todo.completed).length;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -92,7 +104,7 @@ export default function TodosScreen() {
         ) : (
           filteredTodos.map((todo) => (
             <TodoItem
-              key={todo.id}
+              key={todo._id}
               todo={todo}
               onToggle={toggleTodo}
               onDelete={deleteTodo}

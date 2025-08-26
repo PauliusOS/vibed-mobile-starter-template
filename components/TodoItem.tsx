@@ -7,20 +7,21 @@ import {
 } from 'react-native';
 import { Check, X } from 'lucide-react-native';
 import type { Todo } from '@/app/(tabs)/index';
+import { Id } from '../convex/_generated/dataModel';
 
 interface TodoItemProps {
   todo: Todo;
-  onToggle: (id: string) => void;
-  onDelete: (id: string) => void;
+  onToggle: (id: Id<"todos">) => void;
+  onDelete: (id: Id<"todos">) => void;
 }
 
 export function TodoItem({ todo, onToggle, onDelete }: TodoItemProps) {
   const handleToggle = () => {
-    onToggle(todo.id);
+    onToggle(todo._id);
   };
 
   const handleDelete = () => {
-    onDelete(todo.id);
+    onDelete(todo._id);
   };
 
   return (
