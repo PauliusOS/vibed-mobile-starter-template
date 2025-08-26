@@ -1,6 +1,7 @@
 import React from "react";
-import { ClerkProvider, ClerkLoaded, useAuth as useClerkAuth } from "@clerk/clerk-expo";
-import { ConvexReactClient, ConvexProvider } from "convex/react";
+import { ClerkProvider, ClerkLoaded, useAuth } from "@clerk/clerk-expo";
+import { ConvexReactClient } from "convex/react";
+import { ConvexProviderWithClerk } from "convex/react-clerk";
 import * as SecureStore from "expo-secure-store";
 import { View, Text, StyleSheet } from "react-native";
 
@@ -37,8 +38,6 @@ const tokenCache = {
 };
 
 function ConvexProviderWithAuth({ children }: { children: React.ReactNode }) {
-  const { getToken } = useClerkAuth();
-  
   // If Convex is not configured, show a setup message
   if (!convex) {
     return (
@@ -62,15 +61,9 @@ function ConvexProviderWithAuth({ children }: { children: React.ReactNode }) {
   }
   
   return (
-    <ConvexProvider 
-      client={convex}
-      authTokenProvider={async () => {
-        const token = await getToken({ template: "convex" });
-        return token || null;
-      }}
-    >
+    <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
       {children}
-    </ConvexProvider>
+    </ConvexProviderWithClerk>
   );
 }
 

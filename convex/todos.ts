@@ -1,6 +1,34 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 
+// Debug authentication
+export const debugAuth = query({
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    console.log("Debug auth check:", {
+      hasIdentity: !!identity,
+      identity: identity ? {
+        tokenIdentifier: identity.tokenIdentifier,
+        subject: identity.subject,
+        issuer: identity.issuer,
+        email: identity.email,
+        name: identity.name
+      } : null
+    });
+    
+    return {
+      authenticated: !!identity,
+      identity: identity ? {
+        tokenIdentifier: identity.tokenIdentifier,
+        subject: identity.subject,
+        issuer: identity.issuer,
+        email: identity.email,
+        name: identity.name
+      } : null
+    };
+  },
+});
+
 // Get all todos for authenticated user
 export const list = query({
   handler: async (ctx) => {
