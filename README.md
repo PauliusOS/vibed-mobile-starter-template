@@ -57,13 +57,66 @@ A modern, real-time todo application built with Expo, React Native, Convex backe
    npm run dev
    ```
 
-## Configuration
+## ⚠️ CRITICAL SETUP STEPS
 
-You'll need to set up:
-1. A Clerk account for authentication
-2. A Convex project for the backend
+### 1. Create Clerk Account & Configure JWT Template
 
-See [SETUP.md](./SETUP.md) for complete setup instructions.
+1. **Sign up at [clerk.com](https://clerk.com)**
+2. **Create new application** → Select "Expo" framework
+3. **⚠️ CRITICAL: Set up JWT Template**
+   - Go to **Configure** → **JWT Templates**
+   - Click **"+ New template"**
+   - Select **"Convex"** from the list
+   - Name: Must be exactly `convex`
+   - Click **Create**
+4. **Get your keys:**
+   - Go to **API Keys** tab
+   - Copy **Publishable key** (starts with `pk_test_`)
+   - Note your **Frontend API** URL (e.g., `https://your-app.clerk.accounts.dev`)
+
+### 2. Create Convex Project & Set Environment Variable
+
+1. **Sign up at [convex.dev](https://convex.dev)**
+2. **Create new project**
+3. **⚠️ CRITICAL: Set Clerk domain in Convex**
+   - In Convex dashboard → **Settings** → **Environment Variables**
+   - Add variable: `CLERK_JWT_ISSUER_DOMAIN`
+   - Value: Your Clerk Frontend API URL (from step 1.4)
+4. **Initialize Convex:**
+   ```bash
+   npx convex dev
+   ```
+   - Select your project
+   - This creates `.env.local` with your Convex URL
+
+### 3. Configure Your Environment Variables
+
+**Create/update `.env.local` file with:**
+```env
+# Clerk - Get from clerk.com → Your App → API Keys
+EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_YOUR_KEY_HERE
+
+# Convex - Auto-filled by 'npx convex dev'
+EXPO_PUBLIC_CONVEX_URL=https://YOUR_PROJECT.convex.cloud
+```
+
+### 4. Deploy & Test
+
+```bash
+# Deploy Convex functions
+npx convex deploy
+
+# Start the app
+npm run dev
+```
+
+**🚨 Common Setup Issues:**
+- JWT template MUST be named exactly `convex` (case-sensitive)
+- Environment variables MUST start with `EXPO_PUBLIC_` for Expo
+- Clerk domain in Convex MUST match your Frontend API URL exactly
+- Run `npx convex deploy` after any schema changes
+
+For detailed setup instructions, see [SETUP.md](./SETUP.md).
 
 ## Project Structure
 
