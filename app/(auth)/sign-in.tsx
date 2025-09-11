@@ -24,11 +24,13 @@ export default function SignInScreen() {
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const onSignInPress = async () => {
     if (!isLoaded) return;
 
     setLoading(true);
+    setErrorMessage("");
     try {
       const signInAttempt = await signIn.create({
         identifier: emailAddress,
@@ -40,11 +42,28 @@ export default function SignInScreen() {
         router.replace("/(tabs)");
       } else {
         console.error(JSON.stringify(signInAttempt, null, 2));
+        setErrorMessage("Sign in failed. Please try again.");
         Alert.alert("Error", "Sign in failed. Please try again.");
       }
     } catch (err: any) {
       console.error(JSON.stringify(err, null, 2));
-      Alert.alert("Error", err.errors?.[0]?.message || "Sign in failed");
+      
+      // Check for specific error codes and provide user-friendly messages
+      const errorCode = err.errors?.[0]?.code;
+      let errorMessage = "Sign in failed";
+      
+      if (errorCode === "form_identifier_not_found") {
+        errorMessage = "No account found with this email. Please check your email or sign up for a new account.";
+      } else if (errorCode === "form_password_incorrect") {
+        errorMessage = "Incorrect password. Please try again.";
+      } else if (errorCode === "user_locked") {
+        errorMessage = "Your account has been locked. Please try again later.";
+      } else if (err.errors?.[0]?.message) {
+        errorMessage = err.errors[0].message;
+      }
+      
+      setErrorMessage(errorMessage);
+      Alert.alert("Sign In Failed", errorMessage);
     } finally {
       setLoading(false);
     }
@@ -82,6 +101,12 @@ export default function SignInScreen() {
       <View style={styles.content}>
         <Text style={styles.title}>Welcome Back</Text>
         <Text style={styles.subtitle}>Sign in to continue</Text>
+
+        {errorMessage ? (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{errorMessage}</Text>
+          </View>
+        ) : null}
 
         <TextInput
           style={styles.input}
@@ -230,5 +255,18 @@ const styles = StyleSheet.create({
     color: "#333",
     fontSize: 16,
     fontWeight: "600",
+  },
+  errorContainer: {
+    backgroundColor: "#ffebee",
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: "#ef5350",
+  },
+  errorText: {
+    color: "#c62828",
+    fontSize: 14,
+    textAlign: "center",
   },
 });

@@ -27,22 +27,33 @@ export default function SignUpScreen() {
   const [loading, setLoading] = useState(false);
   const [pendingVerification, setPendingVerification] = useState(false);
   const [code, setCode] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const onSignUpPress = async () => {
     if (!isLoaded) return;
 
     setLoading(true);
+    setErrorMessage("");
     try {
-      await signUp.create({
+      const result = await signUp.create({
         emailAddress,
         password,
       });
 
-      await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
-      setPendingVerification(true);
+      // Since email verification is disabled, check if sign-up is complete
+      if (result.status === "complete") {
+        await setActive({ session: result.createdSessionId });
+        router.replace("/(tabs)");
+      } else if (result.status === "missing_requirements") {
+        // If verification is required, prepare it
+        await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+        setPendingVerification(true);
+      }
     } catch (err: any) {
       console.error(JSON.stringify(err, null, 2));
-      Alert.alert("Error", err.errors?.[0]?.message || "Sign up failed");
+      const message = err.errors?.[0]?.message || "Sign up failed";
+      setErrorMessage(message);
+      Alert.alert("Error", message);
     } finally {
       setLoading(false);
     }
@@ -105,6 +116,12 @@ export default function SignUpScreen() {
         <View style={styles.content}>
           <Text style={styles.title}>Create Account</Text>
           <Text style={styles.subtitle}>Sign up to get started</Text>
+
+          {errorMessage ? (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>{errorMessage}</Text>
+            </View>
+          ) : null}
 
           <TextInput
             style={styles.input}
@@ -331,5 +348,18 @@ const styles = StyleSheet.create({
     color: "#333",
     fontSize: 16,
     fontWeight: "600",
+  },
+  errorContainer: {
+    backgroundColor: "#ffebee",
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: "#ef5350",
+  },
+  errorText: {
+    color: "#c62828",
+    fontSize: 14,
+    textAlign: "center",
   },
 });
