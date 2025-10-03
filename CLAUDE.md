@@ -2,6 +2,23 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Claude Code Instructions
+
+### Custom Agents and Plans
+- **`/agents`** - Contains custom agent definitions for specialized tasks
+  - Before implementing features, check if a relevant agent exists in this directory
+  - Invoke custom agents using the Task tool when their expertise matches the request
+  - Each agent file defines its purpose, when to use it, and expected behavior
+  - If no matching agent exists, proceed with the task normally
+- **`/plans`** - Contains implementation plans for specific features
+  - Before implementing features, check if a relevant plan exists in this directory
+  - Follow the step-by-step instructions in the plan when implementing the feature
+  - Plans provide architecture decisions, file locations, and implementation details
+  - If a user requests a feature with a plan, always reference and follow that plan
+  - If no matching plan exists, proceed with the implementation normally
+
+**IMPORTANT**: Always check these directories when starting a new feature or task. Custom agents and plans provide project-specific expertise and tested approaches when available.
+
 ## Development Commands
 
 - `npm run dev` - Start the Expo development server (with telemetry disabled)
@@ -27,6 +44,8 @@ This is an Expo React Native todo app with Convex backend and Clerk authenticati
   - `users.ts` - User management functions
   - `auth.config.ts` - Clerk authentication configuration
 - `hooks/` - Custom hooks including `useFrameworkReady` for framework integration
+- `agents/` - Custom Claude Code agent definitions for specialized tasks
+- `plans/` - Implementation plans and guides for specific features
 
 ### Key Architecture Patterns
 - Uses TypeScript with strict mode enabled
