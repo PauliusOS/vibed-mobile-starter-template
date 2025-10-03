@@ -85,12 +85,15 @@ This will deploy your schema and functions to your Convex backend.
 
 ## Step 6: Run the Application
 
-```bash
-# Start the Expo development server
-npm run dev
+**Important: You must run this command yourself in your terminal** (not through an AI agent) to see the QR code and interactive prompt:
 
-# Press 'i' for iOS or 'a' for Android
+```bash
+npm run dev
 ```
+
+Once the server starts, you'll see:
+- A QR code to scan with your Expo Go app
+- Interactive options to press 'i' for iOS Simulator or 'a' for Android Emulator
 
 ## Step 7: Test the Integration
 
