@@ -4,9 +4,9 @@ import {
   Text,
   ScrollView,
   StyleSheet,
-  SafeAreaView,
   StatusBar,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { AddTodoForm } from '@/components/AddTodoForm';
 import { TodoItem } from '@/components/TodoItem';
 import { FilterTabs } from '@/components/FilterTabs';
@@ -29,15 +29,9 @@ export default function TodosScreen() {
   const [filter, setFilter] = useState<FilterType>('all');
   
   const todos = useQuery(api.todos.list) || [];
-  const debugAuth = useQuery(api.todos.debugAuth);
   const addTodoMutation = useMutation(api.todos.add);
   const toggleTodoMutation = useMutation(api.todos.toggle);
   const deleteTodoMutation = useMutation(api.todos.remove);
-  
-  // Temporary debug logging
-  React.useEffect(() => {
-    console.log("Debug auth result:", debugAuth);
-  }, [debugAuth]);
 
   const addTodo = async (text: string) => {
     try {
@@ -86,14 +80,6 @@ export default function TodosScreen() {
         <Text style={styles.subtitle}>
           {activeTodosCount} active, {completedTodosCount} completed
         </Text>
-        
-        {/* Temporary Debug Info */}
-        <View style={{backgroundColor: '#f0f0f0', padding: 10, marginTop: 10, borderRadius: 5}}>
-          <Text style={{fontSize: 12, color: '#666'}}>
-            Debug: Auth = {debugAuth?.authenticated ? 'YES' : 'NO'} | 
-            User = {debugAuth?.identity?.email || 'none'}
-          </Text>
-        </View>
       </View>
 
       <AddTodoForm onAddTodo={addTodo} />

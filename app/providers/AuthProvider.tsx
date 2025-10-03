@@ -103,6 +103,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
+export default AuthProvider;
+
 const styles = StyleSheet.create({
   setupContainer: {
     flex: 1,
