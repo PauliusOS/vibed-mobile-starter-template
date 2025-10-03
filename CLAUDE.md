@@ -129,3 +129,14 @@ When implementing features that require API keys:
   - Database queries and performance optimization
 - Following these guidelines ensures type safety, proper security, and optimal performance
 - Never deviate from these patterns without explicit user approval
+
+### Documentation Lookup
+**IMPORTANT**: When looking up documentation for libraries or frameworks:
+- ALWAYS use the Context7 MCP tool if available
+
+### Modular Code Best Practice
+**IMPORTANT**: Write modular, reusable code to optimize token usage and maintainability:
+- Break down large pages into smaller, focused components
+- Extract reusable UI elements into separate component files
+- Keep pages concise by delegating logic to components and hooks
+- Avoid pages that are thousands of lines long - this saves tokens and improves code quality
