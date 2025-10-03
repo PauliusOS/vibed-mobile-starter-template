@@ -61,7 +61,7 @@ npm install
 
 ## Step 4: Configure Environment Variables
 
-1. **Update `.env.local`** with your credentials:
+1. **Create a new file called `.env.local`** in the root directory with your credentials:
    ```env
    # Clerk Configuration
    EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_your_key_here
