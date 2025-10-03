@@ -140,3 +140,10 @@ When implementing features that require API keys:
 - Extract reusable UI elements into separate component files
 - Keep pages concise by delegating logic to components and hooks
 - Avoid pages that are thousands of lines long - this saves tokens and improves code quality
+
+### UI-First Implementation Approach
+**IMPORTANT**: When implementing new features or screens:
+1. **Build the UI first** - Create the complete visual interface with all elements, styling, and layout
+2. **Match existing design** - New designs should closely match the existing UI screens, pages, and components, unless otherwise stated by the user
+3. **Then add functionality** - After the UI is in place, implement the business logic, state management, and backend integration
+4. This approach ensures a clear separation of concerns and makes it easier to iterate on both design and functionality independently
