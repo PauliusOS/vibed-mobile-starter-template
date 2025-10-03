@@ -1,12 +1,13 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { ensureUser } from "./users";
 
 // Get all todos for authenticated user
 export const list = query({
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) return [];
-    
+
     return await ctx.db
       .query("todos")
       .withIndex("by_user", q => q.eq("userId", identity.subject))
@@ -21,7 +22,10 @@ export const add = mutation({
   handler: async (ctx, { text }) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new Error("Not authenticated");
-    
+
+    // Ensure user exists in database (auto-creates if needed)
+    await ensureUser(ctx);
+
     return await ctx.db.insert("todos", {
       text,
       completed: false,

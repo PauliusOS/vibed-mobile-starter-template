@@ -2,6 +2,7 @@ import { httpRouter } from "convex/server";
 
 const http = httpRouter();
 
-// HTTP routes will be added when Convex auth is properly configured
+// HTTP routes can be added here when needed
+// Users are now auto-created on first access (see users.ts)
 
 export default http;
