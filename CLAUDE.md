@@ -109,3 +109,10 @@ This is an Expo React Native todo app with Convex backend and Clerk authenticati
 - `eslint.config.js` - ESLint flat configuration
 - `.env.example` - Environment variables template
 - `convex.json` - Convex project configuration
+
+### API Key Management
+When implementing features that require API keys:
+1. Ask the user to provide the API key
+2. Add the key to `.env.local` file yourself (create the file if it doesn't exist)
+3. Update `.env.example` with a placeholder entry for documentation
+4. Never ask the user to manually edit environment files - handle it for them
