@@ -116,3 +116,16 @@ When implementing features that require API keys:
 2. Add the key to `.env.local` file yourself (create the file if it doesn't exist)
 3. Update `.env.example` with a placeholder entry for documentation
 4. Never ask the user to manually edit environment files - handle it for them
+
+### Convex Backend Development
+**IMPORTANT**: When implementing any features or changes that involve Convex:
+- ALWAYS refer to and follow the guidelines in `convexGuidelines.md`
+- This file contains critical best practices for:
+  - Function syntax (queries, mutations, actions, internal functions)
+  - Validators and type safety
+  - Schema definitions and index usage
+  - File storage patterns
+  - Scheduling and cron jobs
+  - Database queries and performance optimization
+- Following these guidelines ensures type safety, proper security, and optimal performance
+- Never deviate from these patterns without explicit user approval
