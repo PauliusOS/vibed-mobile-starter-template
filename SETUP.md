@@ -38,14 +38,18 @@ npm install
 3. **Get Your Clerk Domain**
    - In your Clerk Dashboard, go to **API Keys**
    - Note your Frontend API URL (e.g., `https://your-app.clerk.accounts.dev`)
+   - You'll need this for Step 4
 
-## Step 3: Set Up Convex
+## Step 3: Initialize Convex
 
 1. **Create a Convex Account**
    - Go to [convex.dev](https://convex.dev) and sign up
    - Create a new project
 
 2. **Initialize Convex in Your Project**
+
+   **Important: You must run this command yourself in your terminal** (not through an AI agent) as it's an interactive setup:
+
    ```bash
    npx convex dev
    ```
@@ -53,15 +57,19 @@ npm install
    - Enter your project name
    - This will create a `.env.local` file with your Convex URL
 
-3. **Configure Convex Authentication**
+## Step 4: Configure Convex Authentication
+
+Now that Convex is initialized, configure it to work with Clerk:
+
+1. **Add Clerk JWT Issuer Domain**
    - In your Convex Dashboard, go to **Settings** → **Environment Variables**
    - Add a new variable:
      - Name: `CLERK_JWT_ISSUER_DOMAIN`
      - Value: Your Clerk Frontend API URL (from Step 2.3)
 
-## Step 4: Configure Environment Variables
+## Step 5: Configure Environment Variables
 
-1. **Create a new file called `.env.local`** in the root directory with your credentials:
+1. **Create or update `.env.local` file** in the root directory with your credentials:
    ```env
    # Clerk Configuration
    EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_your_key_here
@@ -70,11 +78,13 @@ npm install
    EXPO_PUBLIC_CONVEX_URL=https://your-project.convex.cloud
    ```
 
+   **Note for AI Agent Users**: If you're working with an AI agent (like Claude Code), you can paste your Clerk publishable key directly in the chat, and the agent will create or update the `.env.local` file for you. The `EXPO_PUBLIC_CONVEX_URL` should already be populated from Step 3.
+
 2. **Verify your setup**:
    - Ensure `.env.local` is in your `.gitignore` (it should be by default)
    - Never commit your actual keys to version control
 
-## Step 5: Deploy Convex Functions
+## Step 6: Deploy Convex Functions
 
 ```bash
 # Deploy your Convex functions
@@ -83,7 +93,7 @@ npx convex deploy
 
 This will deploy your schema and functions to your Convex backend.
 
-## Step 6: Run the Application
+## Step 7: Run the Application
 
 **Important: You must run this command yourself in your terminal** (not through an AI agent) to see the QR code and interactive prompt:
 
@@ -95,7 +105,7 @@ Once the server starts, you'll see:
 - A QR code to scan with your Expo Go app
 - Interactive options to press 'i' for iOS Simulator or 'a' for Android Emulator
 
-## Step 7: Test the Integration
+## Step 8: Test the Integration
 
 1. **Sign Up Flow**
    - Open the app
